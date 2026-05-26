@@ -674,7 +674,22 @@
       </span>
     </div>
   </section>
-
+  
+  <!-- THEME SWITCHER -->
+<div class="theme-bar">
+  <div class="theme-menu" id="themeMenu">
+    <span class="theme-label-top">Switch theme</span>
+    <a class="theme-link active" href="#">Minimal</a>
+    <a class="theme-link" href="./motorsport/">🏎 Motorsport</a>
+  </div>
+  <button class="theme-toggle" id="themeToggle" aria-label="Switch theme">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+    </svg>
+  </button>
+</div>
+  
   <!-- FOOTER -->
   <footer id="contact">
     <p class="footer-left">Designed &amp; built by <span>Sendi Ivanov Yudha Pratama</span></p>
@@ -721,19 +736,6 @@ document.addEventListener('click', e => {
   }, { threshold: 0.1 });
   reveals.forEach(el => observer.observe(el));
 </script>
-<!-- THEME SWITCHER -->
-<div class="theme-bar">
-  <div class="theme-menu" id="themeMenu">
-    <span class="theme-label-top">Switch theme</span>
-    <a class="theme-link active" href="#">Minimal</a>
-    <a class="theme-link" href="./motorsport/">🏎 Motorsport</a>
-  </div>
-  <button class="theme-toggle" id="themeToggle" aria-label="Switch theme">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
-    </svg>
-  </button>
-</div>
+
 </body>
 </html>
