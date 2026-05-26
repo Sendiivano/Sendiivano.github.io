@@ -349,6 +349,59 @@
       border-radius: 50%; background: var(--text-ter);
       margin: 0 5px; vertical-align: 3px;
     }
+    
+    /* ── THEME SWITCHER ── */
+.theme-bar {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.theme-toggle {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border-sec);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  transition: background 0.15s;
+}
+.theme-toggle:hover { background: var(--bg-sec); }
+.theme-toggle svg { width: 16px; height: 16px; color: var(--text-sec); }
+.theme-menu {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+.theme-menu.open { display: flex; }
+.theme-label-top {
+  font-size: 10px;
+  color: var(--text-ter);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding-right: 4px;
+}
+.theme-link {
+  display: inline-block;
+  font-size: 12px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-sec);
+  border-radius: 20px;
+  background: var(--bg);
+  color: var(--text-sec);
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.theme-link:hover { color: var(--text); background: var(--bg-sec); }
+.theme-link.active { border-color: var(--text); color: var(--text); font-weight: 500; }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 520px) {
@@ -651,6 +704,16 @@
     el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
   });
 
+  // Theme switcher toggle
+const themeToggle = document.getElementById('themeToggle');
+const themeMenu = document.getElementById('themeMenu');
+themeToggle.addEventListener('click', () => themeMenu.classList.toggle('open'));
+document.addEventListener('click', e => {
+  if (!themeToggle.contains(e.target) && !themeMenu.contains(e.target)) {
+    themeMenu.classList.remove('open');
+  }
+});
+
   // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver(entries => {
@@ -658,6 +721,19 @@
   }, { threshold: 0.1 });
   reveals.forEach(el => observer.observe(el));
 </script>
-
+<!-- THEME SWITCHER -->
+<div class="theme-bar">
+  <div class="theme-menu" id="themeMenu">
+    <span class="theme-label-top">Switch theme</span>
+    <a class="theme-link active" href="#">Minimal</a>
+    <a class="theme-link" href="./motorsport/">🏎 Motorsport</a>
+  </div>
+  <button class="theme-toggle" id="themeToggle" aria-label="Switch theme">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+    </svg>
+  </button>
+</div>
 </body>
 </html>
