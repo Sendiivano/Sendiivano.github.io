@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sendi Ivanov — MOTORSPORT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;1,700&family=Barlow:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230a0a0a'/><text x='16' y='23' font-family='Arial Black' font-size='16' font-weight='900' fill='%2300d2be' text-anchor='middle'>S</text></svg>" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0a;
+      --bg-1:      #111111;
+      --bg-2:      #1a1a1a;
+      --bg-3:      #222222;
+      --accent:    #00d2be;
+      --accent-dim:#007a71;
+      --white:     #ffffff;
+      --grey:      #888888;
+      --grey-dim:  #404040;
+      --danger:    #e8002d;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      line-height: 1.6;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* carbon fibre texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 8px),
+        repeating-linear-gradient(-45deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 8px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── CURSOR ── */
+    .cursor-ring {
+      position: fixed;
+      width: 32px; height: 32px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, opacity 0.2s, border-color 0.2s;
+    }
+    .cursor-dot {
+      position: fixed;
+      width: 5px; height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+    }
+    .cursor-ring.hover { width: 48px; height: 48px; border-color: rgba(0,210,190,0.4); }
+    @media (hover: none) { .cursor-ring, .cursor-dot { display: none; } body { cursor: auto; } }
+
+    /* ── PAGE FADE ── */
+    .page { opacity: 0; animation: fadeIn 0.6s ease 0.05s forwards; position: relative; z-index: 1; }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--grey-dim);
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto;
+      padding: 0 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800; font-size: 20px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--white); text-decoration: none;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .nav-logo-stripe {
+      width: 18px; height: 4px;
+      background: var(--accent);
+      display: inline-block;
+    }
+    .nav-links { display: flex; gap: 0; list-style: none; }
+    .nav-links a {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; letter-spacing: 1px;
+      color: var(--grey);
+      text-decoration: none;
+      padding: 0 1.25rem;
+      height: 56px;
+      display: flex; align-items: center;
+      border-left: 1px solid var(--grey-dim);
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-links a:hover { color: var(--accent); background: rgba(0,210,190,0.04); }
+    .nav-links li:last-child a { border-right: 1px solid var(--grey-dim); }
+    .nav-pos {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--accent);
+      letter-spacing: 1px;
+    }
+
+    /* ── LAYOUT ── */
+    .page { max-width: 1200px; margin: 0 auto; padding: 0 3rem 5rem; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 5rem 0 4rem;
+      border-bottom: 1px solid var(--grey-dim);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* speed lines */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; right: -100px; bottom: 0;
+      width: 60%;
+      background: repeating-linear-gradient(
+        100deg,
+        transparent 0px,
+        transparent 18px,
+        rgba(0,210,190,0.025) 18px,
+        rgba(0,210,190,0.025) 19px
+      );
+      pointer-events: none;
+    }
+
+    .hero-meta {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 2rem;
+    }
+    .open-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      background: rgba(0,210,190,0.06);
+    }
+    .open-badge .dot {
+      width: 7px; height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(0,210,190,0.5); }
+      50% { opacity:0.6; box-shadow: 0 0 0 5px rgba(0,210,190,0); }
+    }
+    .lap-counter {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--grey);
+      letter-spacing: 1px;
+    }
+
+    .hero-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(64px, 11vw, 128px);
+      line-height: 0.92;
+      letter-spacing: -1px;
+      text-transform: uppercase;
+      margin-bottom: 0.3em;
+    }
+    .hero-name .line2 {
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--white);
+    }
+    .hero-name .accent-word { color: var(--accent); -webkit-text-stroke: 0; }
+
+    .hero-sub {
+      display: flex; align-items: flex-start;
+      gap: 3rem; margin-top: 2.5rem; flex-wrap: wrap;
+    }
+    .hero-tagline {
+      font-size: 15px; color: var(--grey);
+      line-height: 1.7; max-width: 400px;
+    }
+    .hero-tagline strong { color: var(--white); font-weight: 500; }
+
+    .hero-stats {
+      display: flex; gap: 2rem; flex-shrink: 0;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 36px;
+      color: var(--accent); line-height: 1;
+      display: block;
+    }
+    .stat-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; color: var(--grey);
+      letter-spacing: 1px; text-transform: uppercase;
+      margin-top: 4px; display: block;
+    }
+    .stat-divider { width: 1px; background: var(--grey-dim); }
+
+    .hero-cta { margin-top: 2.5rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 14px;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 12px 28px;
+      background: var(--accent); color: var(--bg);
+      text-decoration: none;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 12px 100%);
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn-primary:hover { opacity: 0.85; transform: translateX(3px); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; letter-spacing: 1px;
+      padding: 11px 20px;
+      border: 1px solid var(--grey-dim);
+      color: var(--grey);
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-secondary svg { width: 13px; height: 13px; }
+
+    /* ── SECTION ── */
+    .section { padding: 3.5rem 0; border-bottom: 1px solid var(--grey-dim); }
+    .section:last-child { border-bottom: none; }
+
+    .sec-header {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .sec-pos {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--accent);
+      letter-spacing: 1px; flex-shrink: 0;
+    }
+    .sec-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 28px;
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+    .sec-line { flex: 1; height: 1px; background: var(--grey-dim); }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── PROJECTS ── */
+    .proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--grey-dim); border: 1px solid var(--grey-dim); }
+    .proj-card {
+      background: var(--bg-1);
+      display: flex; flex-direction: column;
+      text-decoration: none; color: inherit;
+      transition: background 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .proj-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--accent);
+      transform: scaleY(0); transform-origin: bottom;
+      transition: transform 0.25s ease;
+    }
+    .proj-card:hover { background: var(--bg-2); }
+    .proj-card:hover::before { transform: scaleY(1); }
+
+    .proj-preview {
+      width: 100%; height: 140px;
+      background: var(--bg-2);
+      overflow: hidden; flex-shrink: 0;
+      border-bottom: 1px solid var(--grey-dim);
+    }
+    .proj-preview svg { width: 100%; height: 100%; }
+
+    .proj-body { padding: 1.25rem 1.25rem 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+    .proj-num {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; color: var(--accent); letter-spacing: 2px;
+    }
+    .proj-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 20px;
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    .proj-desc { font-size: 13px; color: var(--grey); line-height: 1.6; flex: 1; }
+    .proj-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .proj-tag {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; padding: 3px 8px;
+      border: 1px solid var(--grey-dim);
+      color: var(--grey); letter-spacing: 0.5px;
+    }
+    .proj-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--accent);
+      text-decoration: none; margin-top: 4px;
+      transition: gap 0.15s;
+    }
+    .proj-link:hover { gap: 10px; }
+    .proj-link svg { width: 12px; height: 12px; }
+
+    /* ── SKILLS / TELEMETRY ── */
+    .tele-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .tele-grid { grid-template-columns: 1fr; } }
+
+    .tele-row {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .tele-top {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .tele-name {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--white); letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .tele-val {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--accent);
+    }
+    .tele-track {
+      height: 4px; background: var(--bg-3); position: relative; overflow: hidden;
+    }
+    .tele-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-dim), var(--accent));
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 0;
+    }
+    .tele-track.lit .tele-fill { width: var(--w); }
+
+    /* ── TIMELINE ── */
+    .timeline { display: flex; flex-direction: column; }
+    .tl-item {
+      display: grid; grid-template-columns: 140px 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid var(--grey-dim);
+      position: relative;
+    }
+    .tl-item:last-child { border-bottom: none; }
+    .tl-item::before {
+      content: '';
+      position: absolute; left: 140px; top: 0; bottom: 0;
+      width: 1px; background: var(--grey-dim);
+    }
+    .tl-date {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--accent);
+      letter-spacing: 1px; padding-top: 3px;
+      line-height: 1.6;
+    }
+    .tl-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 18px;
+      letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .tl-org { font-size: 13px; color: var(--accent); margin-bottom: 8px; }
+    .tl-desc { font-size: 13px; color: var(--grey); line-height: 1.6; }
+
+    /* ── EDUCATION ── */
+    .edu-grid { display: flex; flex-direction: column; gap: 1px; background: var(--grey-dim); border: 1px solid var(--grey-dim); }
+    .edu-item {
+      background: var(--bg-1);
+      padding: 1.1rem 1.5rem;
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: 1.5rem; align-items: center;
+      transition: background 0.15s;
+    }
+    .edu-item:hover { background: var(--bg-2); }
+    .edu-pos {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 22px; font-weight: bold;
+      color: var(--grey-dim); line-height: 1;
+      min-width: 36px;
+    }
+    .edu-school {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 17px;
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    .edu-degree { font-size: 12px; color: var(--grey); margin-top: 2px; }
+    .edu-year {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--accent); text-align: right;
+      letter-spacing: 1px;
+    }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; padding: 3px 10px;
+      border: 1px solid var(--accent); color: var(--accent);
+      letter-spacing: 1px; margin-left: 8px;
+    }
+    .status-pill .dot { width: 5px; height: 5px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+
+    /* ── CERTS ── */
+    .cert-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    .cert-badge {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; letter-spacing: 0.5px;
+      padding: 10px 16px;
+      border: 1px solid var(--grey-dim); color: var(--grey);
+      background: var(--bg-1);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .cert-badge:hover { border-color: var(--accent); color: var(--white); }
+    .cert-badge svg { width: 14px; height: 14px; color: var(--accent); flex-shrink: 0; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--grey-dim);
+      padding: 2rem 0;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-left {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--grey); letter-spacing: 1px;
+    }
+    .footer-left span { color: var(--accent); }
+    .footer-links { display: flex; gap: 0; }
+    .footer-links a {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px; color: var(--grey);
+      text-decoration: none; letter-spacing: 0.5px;
+      padding: 8px 16px;
+      border: 1px solid var(--grey-dim);
+      margin-left: -1px;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+    .footer-links a:hover { color: var(--accent); border-color: var(--accent); background: rgba(0,210,190,0.04); z-index: 1; position: relative; }
+    .footer-links svg { width: 12px; height: 12px; }
+
+    /* ── THEME SWITCHER ── */
+    .theme-bar {
+      position: fixed; bottom: 1.5rem; right: 1.5rem;
+      display: flex; flex-direction: column; align-items: flex-end;
+      gap: 8px; z-index: 200;
+    }
+    .theme-label {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--grey); cursor: pointer;
+    }
+    .theme-links { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+    .theme-link {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px; letter-spacing: 1px;
+      padding: 5px 12px;
+      border: 1px solid var(--grey-dim);
+      color: var(--grey); text-decoration: none;
+      background: var(--bg-1);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .theme-link:hover { border-color: var(--accent); color: var(--accent); }
+    .theme-link.active { border-color: var(--accent); color: var(--accent); background: rgba(0,210,190,0.06); }
+
+    @media (max-width: 600px) {
+      .page { padding: 0 1.25rem 3rem; }
+      .nav-inner { padding: 0 1.25rem; }
+      .hero { padding: 3rem 0 2.5rem; }
+      .tl-item { grid-template-columns: 1fr; gap: 4px; }
+      .tl-item::before { display: none; }
+      .edu-item { grid-template-columns: auto 1fr; }
+      .edu-year { display: none; }
+      .hero-stats { gap: 1.25rem; }
+      .theme-bar { bottom: 1rem; right: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-dot"  id="cursorDot"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <span class="nav-logo-stripe"></span>
+      SENDI
+    </a>
+    <ul class="nav-links">
+      <li><a href="#projects">P1 · PROJECTS</a></li>
+      <li><a href="#skills">P2 · SKILLS</a></li>
+      <li><a href="#experience">P3 · XP</a></li>
+      <li><a href="#contact">P4 · CONTACT</a></li>
+    </ul>
+    <span class="nav-pos" id="navPos">LAP 1/4</span>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <header class="hero" id="about">
+    <div class="hero-meta">
+      <span class="open-badge"><span class="dot"></span>AVAILABLE FOR RACE</span>
+      <span class="lap-counter" id="raceTime">00:00:00.000</span>
+    </div>
+
+    <h1 class="hero-name">
+      <span class="accent-word">SENDI</span><br>
+      <span class="line2">IVANOV</span>
+    </h1>
+
+    <div class="hero-sub">
+      <p class="hero-tagline">
+        <strong>Junior developer</strong> building Flutter apps and web tools.
+        Passionate about clean code and solid data —
+        looking for my next <strong>pole position</strong> in mobile development.
+      </p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">3</span>
+          <span class="stat-label">Projects</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">5+</span>
+          <span class="stat-label">Years XP</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">2</span>
+          <span class="stat-label">Certs</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-cta">
+      <a href="#projects" class="btn-primary">
+        VIEW PROJECTS
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="mailto:Sendiivano@gmail.com" class="btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+        CONTACT
+      </a>
+      <a href="https://github.com/Sendiivano" target="_blank" rel="noopener" class="btn-secondary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        GITHUB
+      </a>
+    </div>
+  </header>
+
+  <!-- PROJECTS -->
+  <section class="section reveal" id="projects">
+    <div class="sec-header">
+      <span class="sec-pos">P1</span>
+      <h2 class="sec-label">Projects</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="proj-grid">
+
+      <!-- CRUD -->
+      <a class="proj-card" href="https://github.com/Sendiivano/CRUD_Dashboard" target="_blank" rel="noopener">
+        <div class="proj-preview">
+          <svg viewBox="0 0 340 140" xmlns="http://www.w3.org/2000/svg">
+            <rect width="340" height="140" fill="#111"/>
+            <!-- speed stripe top -->
+            <rect x="0" y="0" width="340" height="3" fill="#00d2be"/>
+            <!-- sidebar -->
+            <rect x="0" y="3" width="56" height="137" fill="#0d0d0d"/>
+            <rect x="8" y="18" width="40" height="5" rx="1" fill="#00d2be" opacity="0.8"/>
+            <rect x="8" y="30" width="32" height="4" rx="1" fill="#404040"/>
+            <rect x="8" y="40" width="36" height="4" rx="1" fill="#404040"/>
+            <rect x="8" y="50" width="28" height="4" rx="1" fill="#404040"/>
+            <rect x="8" y="60" width="34" height="4" rx="1" fill="#404040"/>
+            <!-- main area -->
+            <rect x="64" y="12" width="110" height="8" rx="1" fill="#1a1a1a"/>
+            <rect x="182" y="12" width="50" height="8" rx="1" fill="#00d2be" opacity="0.2"/>
+            <!-- table header -->
+            <rect x="64" y="28" width="268" height="10" rx="1" fill="#1a1a1a"/>
+            <rect x="68" y="31" width="24" height="4" rx="1" fill="#00d2be" opacity="0.6"/>
+            <rect x="100" y="31" width="40" height="4" rx="1" fill="#555"/>
+            <rect x="148" y="31" width="50" height="4" rx="1" fill="#555"/>
+            <rect x="206" y="31" width="36" height="4" rx="1" fill="#555"/>
+            <!-- rows -->
+            <rect x="64" y="42" width="268" height="9" rx="0" fill="#151515"/>
+            <rect x="64" y="55" width="268" height="9" rx="0" fill="#111"/>
+            <rect x="64" y="68" width="268" height="9" rx="0" fill="#151515"/>
+            <rect x="64" y="81" width="268" height="9" rx="0" fill="#111"/>
+            <rect x="64" y="94" width="268" height="9" rx="0" fill="#151515"/>
+            <!-- edit/del buttons -->
+            <rect x="280" y="44" width="22" height="5" rx="1" fill="#00d2be" opacity="0.3"/>
+            <rect x="306" y="44" width="22" height="5" rx="1" fill="#e8002d" opacity="0.3"/>
+            <rect x="280" y="57" width="22" height="5" rx="1" fill="#00d2be" opacity="0.3"/>
+            <rect x="306" y="57" width="22" height="5" rx="1" fill="#e8002d" opacity="0.3"/>
+            <rect x="280" y="70" width="22" height="5" rx="1" fill="#00d2be" opacity="0.3"/>
+            <rect x="306" y="70" width="22" height="5" rx="1" fill="#e8002d" opacity="0.3"/>
+            <!-- bottom stripe -->
+            <rect x="0" y="110" width="340" height="30" fill="#0d0d0d"/>
+            <rect x="8" y="120" width="20" height="4" rx="1" fill="#404040"/>
+            <rect x="36" y="120" width="20" height="4" rx="1" fill="#404040"/>
+            <rect x="64" y="120" width="20" height="4" rx="1" fill="#404040"/>
+          </svg>
+        </div>
+        <div class="proj-body">
+          <span class="proj-num">SECTOR 01 ·</span>
+          <p class="proj-name">CRUD Dashboard</p>
+          <p class="proj-desc">Full-stack web dashboard with create, read, update, and delete operations backed by MySQL and CodeIgniter 4.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">CodeIgniter 4</span>
+            <span class="proj-tag">PHP</span>
+            <span class="proj-tag">Bootstrap 5</span>
+            <span class="proj-tag">MySQL</span>
+          </div>
+          <a class="proj-link" href="https://github.com/Sendiivano/CRUD_Dashboard" target="_blank" rel="noopener">
+            VIEW REPO →
+          </a>
+        </div>
+      </a>
+
+      <!-- Anime -->
+      <a class="proj-card" href="https://github.com/Sendiivano/anime_quiz_app" target="_blank" rel="noopener">
+        <div class="proj-preview">
+          <svg viewBox="0 0 340 140" xmlns="http://www.w3.org/2000/svg">
+            <rect width="340" height="140" fill="#111"/>
+            <rect x="0" y="0" width="340" height="3" fill="#00d2be"/>
+            <!-- phone -->
+            <rect x="120" y="10" width="100" height="120" rx="10" fill="#0d0d0d" stroke="#333" stroke-width="1"/>
+            <rect x="126" y="20" width="88" height="100" rx="5" fill="#111"/>
+            <rect x="148" y="12" width="34" height="5" rx="2" fill="#333"/>
+            <!-- title -->
+            <rect x="134" y="28" width="72" height="6" rx="2" fill="#00d2be" opacity="0.7"/>
+            <rect x="140" y="38" width="60" height="4" rx="1" fill="#333"/>
+            <!-- options -->
+            <rect x="130" y="50" width="80" height="14" rx="3" fill="#1a1a1a" stroke="#333" stroke-width="0.5"/>
+            <rect x="130" y="68" width="80" height="14" rx="3" fill="#00d2be" opacity="0.15" stroke="#00d2be" stroke-width="0.5"/>
+            <rect x="134" y="72" width="50" height="4" rx="1" fill="#00d2be" opacity="0.6"/>
+            <rect x="130" y="86" width="80" height="14" rx="3" fill="#1a1a1a" stroke="#333" stroke-width="0.5"/>
+            <rect x="130" y="104" width="80" height="4" rx="1" fill="#1a1a1a"/>
+            <rect x="130" y="104" width="36" height="4" rx="1" fill="#00d2be" opacity="0.7"/>
+            <!-- deco -->
+            <text x="40" y="65" font-size="28" opacity="0.3">🎌</text>
+            <text x="258" y="90" font-size="22" opacity="0.25">⭐</text>
+          </svg>
+        </div>
+        <div class="proj-body">
+          <span class="proj-num">SECTOR 02 ·</span>
+          <p class="proj-name">Anime Finder</p>
+          <p class="proj-desc">Flutter mobile app recommending anime via a 5-question quiz using a weighted scoring algorithm across 25+ titles.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Flutter</span>
+            <span class="proj-tag">Dart</span>
+            <span class="proj-tag">Algorithm</span>
+            <span class="proj-tag">Mobile</span>
+          </div>
+          <a class="proj-link" href="https://github.com/Sendiivano/anime_quiz_app" target="_blank" rel="noopener">
+            VIEW REPO →
+          </a>
+        </div>
+      </a>
+
+      <!-- Expense -->
+      <a class="proj-card" href="https://github.com/Sendiivano/expense_tracker" target="_blank" rel="noopener">
+        <div class="proj-preview">
+          <svg viewBox="0 0 340 140" xmlns="http://www.w3.org/2000/svg">
+            <rect width="340" height="140" fill="#111"/>
+            <rect x="0" y="0" width="340" height="3" fill="#00d2be"/>
+            <rect x="120" y="10" width="100" height="120" rx="10" fill="#0d0d0d" stroke="#333" stroke-width="1"/>
+            <rect x="126" y="20" width="88" height="100" rx="5" fill="#111"/>
+            <rect x="148" y="12" width="34" height="5" rx="2" fill="#333"/>
+            <!-- balance card -->
+            <rect x="130" y="26" width="80" height="30" rx="4" fill="#007a71"/>
+            <rect x="136" y="31" width="30" height="4" rx="1" fill="white" opacity="0.4"/>
+            <rect x="136" y="39" width="52" height="8" rx="2" fill="white" opacity="0.85"/>
+            <!-- bars -->
+            <rect x="133" y="107" width="10" height="12" rx="1" fill="#00d2be" opacity="0.3"/>
+            <rect x="147" y="100" width="10" height="19" rx="1" fill="#00d2be" opacity="0.5"/>
+            <rect x="161" y="93" width="10" height="26" rx="1" fill="#00d2be" opacity="0.8"/>
+            <rect x="175" y="98" width="10" height="21" rx="1" fill="#00d2be" opacity="0.6"/>
+            <rect x="189" y="94" width="10" height="25" rx="1" fill="#00d2be"/>
+            <!-- rows -->
+            <rect x="130" y="63" width="80" height="7" rx="1" fill="#1a1a1a"/>
+            <rect x="130" y="74" width="80" height="7" rx="1" fill="#1a1a1a"/>
+            <rect x="130" y="85" width="80" height="7" rx="1" fill="#1a1a1a"/>
+            <text x="44" y="80" font-size="22" opacity="0.25">💰</text>
+            <text x="262" y="50" font-size="20" opacity="0.2">📊</text>
+          </svg>
+        </div>
+        <div class="proj-body">
+          <span class="proj-num">SECTOR 03 ·</span>
+          <p class="proj-name">Expense Tracker</p>
+          <p class="proj-desc">Flutter app for tracking personal expenses and income with state management, data persistence, and clean mobile UI.</p>
+          <div class="proj-tags">
+            <span class="proj-tag">Flutter</span>
+            <span class="proj-tag">Dart</span>
+            <span class="proj-tag">Mobile</span>
+          </div>
+          <a class="proj-link" href="https://github.com/Sendiivano/expense_tracker" target="_blank" rel="noopener">
+            VIEW REPO →
+          </a>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- SKILLS / TELEMETRY -->
+  <section class="section reveal" id="skills">
+    <div class="sec-header">
+      <span class="sec-pos">P2</span>
+      <h2 class="sec-label">Telemetry</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="tele-grid">
+      <div class="tele-row"><div class="tele-top"><span class="tele-name">Flutter</span><span class="tele-val">82%</span></div><div class="tele-track"><div class="tele-fill" style="--w:82%"></div></div></div>
+      <div class="tele-row"><div class="tele-top"><span class="tele-name">HTML / CSS / PHP</span><span class="tele-val">78%</span></div><div class="tele-track"><div class="tele-fill" style="--w:78%"></div></div></div>
+      <div class="tele-row"><div class="tele-top"><span class="tele-name">Git & Version Control</span><span class="tele-val">75%</span></div><div class="tele-track"><div class="tele-fill" style="--w:75%"></div></div></div>
+      <div class="tele-row"><div class="tele-top"><span class="tele-name">Power BI</span><span class="tele-val">65%</span></div><div class="tele-track"><div class="tele-fill" style="--w:65%"></div></div></div>
+      <div class="tele-row"><div class="tele-top"><span class="tele-name">Python</span><span class="tele-val">60%</span></div><div class="tele-track"><div class="tele-fill" style="--w:60%"></div></div></div>
+      <div class="tele-row"><div class="tele-top"><span class="tele-name">Tableau</span><span class="tele-val">60%</span></div><div class="tele-track"><div class="tele-fill" style="--w:60%"></div></div></div>
+      <div class="tele-row"><div class="tele-top"><span class="tele-name">Microsoft Office</span><span class="tele-val">85%</span></div><div class="tele-track"><div class="tele-fill" style="--w:85%"></div></div></div>
+      <div class="tele-row"><div class="tele-top"><span class="tele-name">Data Handling</span><span class="tele-val">80%</span></div><div class="tele-track"><div class="tele-fill" style="--w:80%"></div></div></div>
+      <div class="tele-row"><div class="tele-top"><span class="tele-name">English</span><span class="tele-val">75%</span></div><div class="tele-track"><div class="tele-fill" style="--w:75%"></div></div></div>
+      <div class="tele-row"><div class="tele-top"><span class="tele-name">Japanese</span><span class="tele-val">50%</span></div><div class="tele-track"><div class="tele-fill" style="--w:50%"></div></div></div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="section reveal" id="experience">
+    <div class="sec-header">
+      <span class="sec-pos">P3</span>
+      <h2 class="sec-label">Race History</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <span class="tl-date">JUL 2017<br>SEP 2017</span>
+        <div>
+          <p class="tl-title">IT Intern · Data Entry</p>
+          <p class="tl-org">PT Bonet Utama</p>
+          <p class="tl-desc">Entered and managed 1,000+ records, verified data for 100% accuracy, organized digital and physical records, and generated decision-support reports while maintaining strict data confidentiality.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <span class="tl-date">JAN 2018<br>JAN 2023</span>
+        <div>
+          <p class="tl-title">Freelance IT Technician</p>
+          <p class="tl-org">Self-employed</p>
+          <p class="tl-desc">Troubleshot and repaired laptops and smartphones for clients, providing practical hardware and software support over a 5-year period.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="section reveal">
+    <div class="sec-header">
+      <span class="sec-pos">—</span>
+      <h2 class="sec-label">Qualifications</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="edu-grid">
+      <div class="edu-item">
+        <span class="edu-pos">P1</span>
+        <div>
+          <p class="edu-school">Open University <span class="status-pill"><span class="dot"></span>LIVE</span></p>
+          <p class="edu-degree">Information Systems</p>
+        </div>
+        <span class="edu-year">2026 –<br>PRESENT</span>
+      </div>
+      <div class="edu-item">
+        <span class="edu-pos">P2</span>
+        <div>
+          <p class="edu-school">Binaniaga University</p>
+          <p class="edu-degree">Information Systems — Power BI, Python, Tableau</p>
+        </div>
+        <span class="edu-year">2021 –<br>2023</span>
+      </div>
+      <div class="edu-item">
+        <span class="edu-pos">P3</span>
+        <div>
+          <p class="edu-school">SMKN 1 Cibinong</p>
+          <p class="edu-degree">Software Engineering — CodeIgniter, JS, Bootstrap</p>
+        </div>
+        <span class="edu-year">2015 –<br>2018</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTS -->
+  <section class="section reveal">
+    <div class="sec-header">
+      <span class="sec-pos">—</span>
+      <h2 class="sec-label">Certifications</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="cert-row">
+      <span class="cert-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+        Microsoft Technology Associate (MTA)
+      </span>
+      <span class="cert-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 8l6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></svg>
+        TOEFL Prediction (Central Course)
+      </span>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contact">
+    <p class="footer-left">SENDI <span>IVANOV</span> YUDHA PRATAMA · <span>2026</span></p>
+    <div class="footer-links">
+      <a href="mailto:Sendiivano@gmail.com">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>
+        EMAIL
+      </a>
+      <a href="https://github.com/Sendiivano" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        GITHUB
+      </a>
+      <a href="../">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        HOME
+      </a>
+    </div>
+  </footer>
+
+</div>
+
+<!-- THEME SWITCHER -->
+<div class="theme-bar">
+  <span class="theme-label">// THEME</span>
+  <div class="theme-links">
+    <a class="theme-link" href="../">MINIMAL</a>
+    <a class="theme-link active" href="#">MOTORSPORT</a>
+  </div>
+</div>
+
+<script>
+  // Cursor
+  const ring = document.getElementById('cursorRing');
+  const dot  = document.getElementById('cursorDot');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx+'px'; dot.style.top = my+'px'; });
+  (function animRing() {
+    rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+    ring.style.left = rx+'px'; ring.style.top = ry+'px';
+    requestAnimationFrame(animRing);
+  })();
+  document.querySelectorAll('a,button').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+  });
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Telemetry bars animate on scroll
+  const teleObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.querySelectorAll('.tele-track').forEach(t => t.classList.add('lit')); });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('#skills').forEach(el => teleObs.observe(el));
+
+  // Race timer
+  const start = Date.now();
+  setInterval(() => {
+    const ms = Date.now() - start;
+    const h  = String(Math.floor(ms/3600000)).padStart(2,'0');
+    const m  = String(Math.floor((ms%3600000)/60000)).padStart(2,'0');
+    const s  = String(Math.floor((ms%60000)/1000)).padStart(2,'0');
+    const cs = String(Math.floor((ms%1000)/10)).padStart(3,'0');
+    document.getElementById('raceTime').textContent = `${h}:${m}:${s}.${cs}`;
+  }, 50);
+
+  // Nav lap counter
+  const sections = ['about','projects','skills','experience'];
+  const labels   = ['LAP 1/4','LAP 2/4','LAP 3/4','LAP 4/4'];
+  const navPos   = document.getElementById('navPos');
+  const secObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const i = sections.indexOf(e.target.id);
+        if (i >= 0) navPos.textContent = labels[i];
+      }
+    });
+  }, { threshold: 0.4 });
+  sections.forEach(id => { const el = document.getElementById(id); if(el) secObs.observe(el); });
+</script>
+
+</body>
+</html>
